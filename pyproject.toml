@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "qdrant-indexing"
+version = "0.1.0"
+description = ""
+authors = ["kohei <koheitech001@gmail.com>"]
+license = "Apach-2.0"
+readme = "README.md"
+packages = [{include = "qdrant_indexing"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+qdrant-client = "^1.1.6"
+argparse = "^1.4.0"
+pandas = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
