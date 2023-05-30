@@ -3,7 +3,8 @@
 import argparse
 import pandas as pd
 import ast
-
+from logger import mylogger
+logger =  mylogger(__name__)
 
 # def create_index()
 
@@ -32,18 +33,24 @@ def main(
             vector=row_embedding,
             # payload={"city": "Berlin"}
         )
+        # print(a_point)
         point_list.append(a_point)
 
     dims = len(row_embedding)
+
+    logger.info(f"qdrant_url : {args.qdrant_url}")
+    logger.info(f"qdrant_port : {str(args.qdrant_port)}")
+    logger.info(f"qdrant_collection : {args.qdrant_collection}")
+    logger.info(f"dims : {str(dims)}")
     # print(dims)
     qdrant_client = QdrantClient(
         host=args.qdrant_url,
-        port=args.qdrant_port,
+        port=str(args.qdrant_port),
         prefer_grpc=False
     )
 
     qdrant_client.recreate_collection(
-        collection_name=args.qdarant_collection,
+        collection_name=args.qdrant_collection,
         vectors_config=VectorParams(
             size=dims, 
             distance=Distance.COSINE
@@ -51,7 +58,7 @@ def main(
     )
 
     collection_info = qdrant_client.get_collection(
-        collection_name=args.qdarant_collection
+        collection_name=args.qdrant_collection
     )
 
     assert collection_info.status == CollectionStatus.GREEN
@@ -59,7 +66,7 @@ def main(
 
 
     operation_info = qdrant_client.upsert(
-        collection_name=args.qdarant_collection,
+        collection_name=args.qdrant_collection,
         wait=True,
         points=point_list
     )
@@ -81,6 +88,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--qdrant_url', '-QU', type=str, default='localhost', help='')
+    # parser.add_argument('--qdrant_url', '-QU', type=str, default='localhost', help='')
+    
     parser.add_argument('--qdrant_port', '-QP', type=int, default=6333, help='')
     parser.add_argument('--qdrant_collection', '-QC', type=str, default='localhost', help='')
     parser.add_argument('--pandas_path', '-PP', type=str, default='./dataset.csv', help='')
